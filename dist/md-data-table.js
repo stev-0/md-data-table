@@ -225,13 +225,25 @@ function mdColumn($compile, $mdUtil) {
     function isNumeric() {
       return attrs.mdNumeric === '' || scope.numeric;
     }
+    
+    function hasCustomSortFunc() {
+      return scope.customSortFunc;
+    }
 
     function setOrder() {
       scope.$applyAsync(function () {
         if(isActive()) {
+          if (hasCustomSortFunc()) {
+            headCtrl.order = scope.customSortFunc;
+          } else {
           headCtrl.order = scope.getDirection() === 'md-asc' ? '-' + scope.orderBy : scope.orderBy;
+          }
         } else {
+          if (hasCustomSortFunc()) {
+            headCtrl.order = scope.customSortFunc;
+          } else {
           headCtrl.order = scope.getDirection() === 'md-asc' ? scope.orderBy : '-' + scope.orderBy;
+          }
         }
 
         if(angular.isFunction(headCtrl.onReorder)) {
@@ -293,7 +305,8 @@ function mdColumn($compile, $mdUtil) {
     restrict: 'A',
     scope: {
       numeric: '=?mdNumeric',
-      orderBy: '@?mdOrderBy'
+      orderBy: '@?mdOrderBy',
+      customSortFunc: '=?mdCustomSort'
     }
   };
 }
